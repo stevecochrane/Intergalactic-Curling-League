@@ -1,4 +1,4 @@
-My first Ludum Dare entry. It's for two players and it's like curling with a dash of Marble Madness. In space!
+My first Ludum Dare entry. It's for two players and it's like curling with a dash of Marble Madness. In space! Be warned: I created all of this in the span of 48 hours, and resulting code is not pretty.
 
 You can play it here: http://stevecochrane.com/ludum-dare/intergalactic-curling-league/
 
