@@ -1,5 +1,7 @@
 My first Ludum Dare entry. It's for two players and it's like curling with a dash of Marble Madness. In space!
 
+You can play it here: http://stevecochrane.com/ludum-dare/intergalactic-curling-league/
+
 INSTRUCTIONS:
 
 When it's your turn you can press left or right to line up your shot and hold space bar to begin your throw. The sooner you let go of the space bar, the faster you'll throw it. So if you want to knock someone out of position, let go immediately. If you want a short-range throw for a defensive position, hold on for a second or two.
