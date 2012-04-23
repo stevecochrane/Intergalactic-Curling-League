@@ -1,0 +1,25 @@
+#TITLE Title Screen
+#COMPOSER Steve Cochrane
+#PROGRAMER 2012 Steve Cochrane
+
+; Volume envelopes
+@v0 = { 8 8 8 7 7 7 6 6 6 5 5 5 4 4 4 3 3 3 2 2 2 1 1 1 0 }
+
+; Samples (downsampled from some sounds in GarageBand)
+@DPCM0 = { "samples/hip-hop-bass-clean.dmc", 15 }
+@DPCM2 = { "samples/pop-kit-snare-clean.dmc", 15 }
+
+; Tempo set to 180bpm
+CDE t180
+
+; Set up channel C (triangle): length = 8th notes, octave = 3, quantize = 6
+C l8 o3 q6
+C r4 r4 r4 [b4 g a b4 g a a+ b r b r b a+ b4 g a b4 g a a+ b r b r b r r r8]4
+
+; Set up channel D (noise): length = 8th notes, octave = 3, noise mode = 0 (normal), volume = volume envelope 0
+D l4 o1 @0 @v0
+D r r r [d d d d]16 d
+
+; Set up channel E (sample): length = 4th notes, octave = 0
+E l4 o0
+E d8 r8 d8 r8 d8 d8 [ [c d8 c8 r8 c8 d]3 c d8 c8 r8 c8 d8 d8 ]4 c

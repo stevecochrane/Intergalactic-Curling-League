@@ -4,6 +4,7 @@ package {
 	
 	public class PlayState extends FlxState {
 
+		[Embed(source="audio/in-game.mp3")] private var audInGame:Class;
 		[Embed(source="audio/rock-hit.mp3")] private var audRockHit:Class;
 		[Embed(source="audio/start.mp3")] private var audStart:Class;
 		[Embed(source="audio/sweep-in.mp3")] private var audSweepIn:Class;
@@ -29,6 +30,7 @@ package {
 		public var closestRock:Rock;
 		public var closestRockDistance:Number;
 		public var camera:FlxCamera;
+		public var collisionEventRegulator:Number;
 		public var distanceMarker:FlxText;
 		public var distanceMarkerGroup:FlxGroup;
 		public var gameOver:Boolean;
@@ -51,6 +53,7 @@ package {
 		public var starfieldBackGroup:FlxGroup;
 		public var starfieldFront:FlxSprite;
 		public var starfieldFrontGroup:FlxGroup;
+		public var sweeping:Boolean;
 		public var textPersistentGroup:FlxGroup;
 		public var textTemporaryGroup:FlxGroup;
 		public var winningRock:FlxSprite;
@@ -75,7 +78,7 @@ package {
 			rockThrown = false;
 			rockStartPos = 0;
 			rockDragStart = 10;
-			rockDragLow = 5;
+			rockDragLow = 4;
 			
 			broomsOut = false;
 			
@@ -215,27 +218,35 @@ package {
 			playerOneGo.size = 16;
 			textTemporaryGroup.add(playerOneGo);
 			
-			FlxG.watch(rock, "x", "rock.x");
-			FlxG.watch(rock, "y", "rock.y");
+			//	Start the in-game music
+			FlxG.playMusic(audInGame);
 			
-/*			FlxG.watch(rock, "y", "rock.y");
+			sweeping = false;
+			
+			collisionEventRegulator = 0;
+			
+/*			FlxG.watch(rock, "x", "rock.x");
+			FlxG.watch(rock, "y", "rock.y");
+*/			
+			FlxG.watch(rock, "y", "rock.y");
 			FlxG.watch(rock.acceleration, "y", "rock.accel.y");
 			FlxG.watch(rock.drag, "y", "rock.drag.y");
-			FlxG.watch(rock.maxVelocity, "y", "rock.maxVelo.y");*/
-
+			FlxG.watch(rock.maxVelocity, "y", "rock.maxVelo.y");
+			FlxG.watch(rock.velocity, "x", "rock.velo.x");
 			FlxG.watch(rock.velocity, "y", "rock.velo.y");
+/*			FlxG.watch(this, "sweeping", "sweeping");*/
 			
 /*			FlxG.watch(this, "rockBeingThrown", "rockBeingThrown");*/
 			
-			FlxG.watch(broomLeft, "x", "broomLeft.x");
+/*			FlxG.watch(broomLeft, "x", "broomLeft.x");
 			FlxG.watch(broomRight, "x", "broomRight.x");
-
+*/
 /*			FlxG.watch(this, "rockStartPos", "rockStartPos");
 			FlxG.watch(this, "rockThrown", "rockThrown");
 			FlxG.watch(this, "broomsOut", "broomsOut");*/
 			
-			FlxG.watch(launchHand, "y", "launchHand.y");
-
+/*			FlxG.watch(launchHand, "y", "launchHand.y");
+*/
 			add(starfieldBackGroup);
 			add(starfieldFrontGroup);
 			add(house);
@@ -253,32 +264,78 @@ package {
 			
 			FlxG.collide(rockGroup, null, rockHit);
 			
-			if (FlxG.keys.justPressed("RIGHT") && !rockThrown) {
-				if (rockStartPos < 2) {
-					//	Mark the rock as having been moved
-					rockStartPos += 1;
-					//	Move the rock to the right
-					rock.x += 32;
-					//	Move the brooms over to match
-					broomLeft.x += 32;
-					broomRight.x += 32;
-					//	AND move the launch hand over to match
-					launchHand.x += 32;
+			//	Have the brooms match the x position of the rock
+			if (sweeping) {
+				broomLeft.x = (rock.x - broomLeft.width) + 32;
+				broomRight.x = (rock.x + 16) - 32;
+			} else {
+				broomLeft.x = rock.x - broomLeft.width;
+				broomRight.x = rock.x + 16;
+			}
+			
+			collisionEventRegulator += FlxG.elapsed;
+			
+			//	Horizontal movement controls
+			if (FlxG.keys.LEFT) {
+				
+				if (rockThrown) {
+					
+					if (rock.velocity.y != 0) {
+						
+						rock.velocity.x -= 0 - rock.velocity.y / 2;
+/*						rock.drag.x = 0 - rock.velocity.y * 1.5;*/
+						rock.maxVelocity.x = 0 - rock.velocity.y / 2;
+						
+					}
 				}
 			}
+			
+			if (FlxG.keys.RIGHT) {
+				
+				if (rockThrown) {
+					
+					if (rock.velocity.y != 0) {
+						
+						rock.velocity.x += 0 - rock.velocity.y / 2;
+/*						rock.drag.x = 0 - rock.velocity.y * 1.5;*/
+						rock.maxVelocity.x = 0 - rock.velocity.y / 2;
+						
+					}
+				}
+			}
+			
 			if (FlxG.keys.justPressed("LEFT") && !rockThrown) {
+					
 				if (rockStartPos > -2) {
 					//	Mark the rock as having been moved
 					rockStartPos -= 1;
 					//	Move the rock to the left
 					rock.x -= 32;
 					//	Move the brooms over to match
-					broomLeft.x -= 32;
-					broomRight.x -= 32;
+/*					broomLeft.x -= 32;*/
+/*					broomRight.x -= 32;*/
 					//	AND move the launch hand over to match
 					launchHand.x -= 32;
 				}
+				
 			}
+			
+			if (FlxG.keys.justPressed("RIGHT") && !rockThrown) {
+
+				if (rockStartPos < 2) {
+					//	Mark the rock as having been moved
+					rockStartPos += 1;
+					//	Move the rock to the right
+					rock.x += 32;
+					//	Move the brooms over to match
+/*					broomLeft.x += 32;*/
+/*					broomRight.x += 32;*/
+					//	AND move the launch hand over to match
+					launchHand.x += 32;
+				}
+
+			}
+			
 			
 			if (FlxG.keys.justPressed("SPACE")) {
 				
@@ -292,17 +349,22 @@ package {
 					FlxG.log("rock being thrown");
 					rockBeingThrown = true;
 					rock.acceleration.y = -1000;
-					rock.maxVelocity.y = 200;
+					rock.maxVelocity.y = 220;
 					rock.drag.y = rockDragStart;
 /*					textTemporaryGroup.clear();*/
+					
+					//	New stuff for horizontal movement
+/*					rock.drag.x = 30;*/
 				
 				} else if (broomsOut && rock.velocity.y != 0) {
 					
 					//	Sweep the brooms to lessen drag
 					FlxG.log("sweeping the brooms!");
 					
-					broomLeft.x += 32;
-					broomRight.x -= 32;
+/*					broomLeft.x += 32;*/
+/*					broomRight.x -= 32;*/
+					
+					sweeping = true;
 					
 					rock.drag.y = rockDragLow;
 					
@@ -310,7 +372,7 @@ package {
 
 				} else if (rockThrown && rock.velocity.y == 0 || rock.y < 0) {
 					
-					if (rockCount < 2) {
+					if (rockCount < 8) {
 						//	Start a new rock
 						FlxG.log("starting a new rock");
 						rockCount += 1;
@@ -333,16 +395,16 @@ package {
 						
 						rockGroup.add(rock);
 
-						FlxG.watch(rock.velocity, "y", "rock.velo.y");
+/*						FlxG.watch(rock.velocity, "y", "rock.velo.y");*/
 						camera.follow(rock);
 						rockThrown = false;
 						
 						//	Bring the brooms back to their starting positions
-						broomLeft.x = broomLeftStartX;
+/*						broomLeft.x = broomLeftStartX;
 						broomLeft.y = broomLeftStartY;
 						broomRight.x = broomRightStartX;
 						broomRight.y = broomRightStartY;
-						
+*/						
 						//	Bring the launch hand back to its starting position too
 						launchHand.x = launchHandStartX;
 						
@@ -357,21 +419,26 @@ package {
 							
 							FlxG.log("rock.x = " + rock.x);
 							FlxG.log("rock.y = " + rock.y);
+							
+							//	If this rock is in play...
+							if (rockGroup.members[i].y > -16 && rockGroup.members[i].x > -16 && rockGroup.members[i].x < FlxG.width) {
 
-							//	Find the midpoint for this rock
-							var rockMidpoint:FlxPoint = new FlxPoint(rockGroup.members[i].x + (rockGroup.members[i].width / 2), rockGroup.members[i].y + (rockGroup.members[i].height / 2));
-							FlxG.log("rockMidpoint.x = " + rockMidpoint.x);
-							FlxG.log("rockMidpoint.y = " + rockMidpoint.y);
+								//	Find the midpoint for this rock
+								var rockMidpoint:FlxPoint = new FlxPoint(rockGroup.members[i].x + (rockGroup.members[i].width / 2), rockGroup.members[i].y + (rockGroup.members[i].height / 2));
+								FlxG.log("rockMidpoint.x = " + rockMidpoint.x);
+								FlxG.log("rockMidpoint.y = " + rockMidpoint.y);
 
-							//	Find the distance from that midpoint to the center of the button
-							var rockDistance:Number = distanceBetween(rockMidpoint, buttonPoint);
-							FlxG.log("distance to button: " + rockDistance);
+								//	Find the distance from that midpoint to the center of the button
+								var rockDistance:Number = distanceBetween(rockMidpoint, buttonPoint);
+								FlxG.log("distance to button: " + rockDistance);
 
-							//	If that is the closest distance so far, store a reference to this rock
-							if (rockDistance < closestRockDistance) {
-								closestRockDistance = rockDistance;
-								closestRock = rockGroup.members[i];
+								//	If that is the closest distance so far, store a reference to this rock
+								if (rockDistance < closestRockDistance) {
+									closestRockDistance = rockDistance;
+									closestRock = rockGroup.members[i];
+								}
 							}
+
 						}
 						//	Now that we've looped through all of the rocks, call out the closest one as the winner
 						FlxG.log("the winner is: " + closestRock.team);
@@ -400,6 +467,9 @@ package {
 						textTemporaryGroup.add(winningTextTwo);
 						textTemporaryGroup.add(winningTextThree);
 						
+						//	Pause the in game music
+						FlxG.pauseSounds();
+						
 						//	Use the same sound effect as pressing start at the title screen,
 						//	and hope that no one notices
 						FlxG.play(audStart);
@@ -418,8 +488,10 @@ package {
 				} else if (broomsOut) {
 
 					//	Move the brooms back when the key is released
-					broomLeft.x -= 32;
-					broomRight.x += 32;
+/*					broomLeft.x -= 32;*/
+/*					broomRight.x += 32;*/
+					
+					sweeping = false;
 
 					rock.drag.y = rockDragLow;
 
@@ -427,13 +499,13 @@ package {
 				}
 			}
 			
-			if (rock.velocity.y == -200) {
+			if (rock.velocity.y <= -200) {
 				FlxG.log('done accelerating');
 				rock.acceleration.y = 0;
 			}
 			
 			//	If the rock is between screens 3 and 8, activate the brooms
-			if (rock.y < 1920 && rock.y > 480) {
+			if (rock.y < 2080 && rock.y > 380) {
 				if (!broomsOut) {
 					//	bring out the brooms
 					FlxG.log("bringing out the brooms");
@@ -473,7 +545,7 @@ package {
 				FlxG.log('rock being thrown');
 				if (rock.velocity.y < 0) {
 					FlxG.log('scaling down velocity');
-					rock.velocity.y += 1;
+					rock.velocity.y += 0.75;
 				}
 				
 				//	Have the hand match the ball's y position
@@ -484,32 +556,81 @@ package {
 		//	Called whenever two rocks collide
 		public function rockHit(rock1:Rock, rock2:Rock):void {
 			
-			// 	Play the sound effect
-			FlxG.play(audRockHit);
+			if (collisionEventRegulator > 0.5) {
 			
-			//	Compare the y positions to determine which rock is farther up,
-			//	then space them apart immediately to prevent duplicate events.
-			//	We want to transfer half the speed of the bottom rock to the 
-			//	top rock, then stop the bottom rock from moving.
-			if (rock1.y > rock2.y) {
+				FlxG.log("rock hit!");
 
-				//	Apply half of rock 1's velocity to rock 2
-				rock2.velocity.x = rock1.velocity.x / 2;
-				rock2.velocity.y = rock1.velocity.y / 2;
-				//	Stop rock 1
-				rock1.velocity.x = 0;
-				rock1.velocity.y = 0;
+				// 	Play the sound effect
+				FlxG.play(audRockHit);
 
-			} else {
+				//	Compare the y positions to determine which rock is farther up,
+				//	then space them apart immediately to prevent duplicate events.
+				//	We want to transfer half the speed of the faster rock to the 
+				//	slower rock, then stop the faster rock from moving.
+//				if (rock2.velocity.y == 0) {
 
-				//	Apply half of rock 1's velocity to rock 2
-				rock1.velocity.x = rock2.velocity.x / 2;
-				rock1.velocity.y = rock2.velocity.y / 2;
-				//	Stop rock 1
-				rock2.velocity.x = 0;
-				rock2.velocity.y = 0;
+/*					rock2.drag.x = rockDragStart;*/
 
+					//	Apply half of rock 1's velocity to rock 2
+//					rock2.velocity.x = rock1.velocity.x / 2;
+//					rock2.velocity.y = rock1.velocity.y / 2;
+					//	Stop rock 1
+/*					rock1.velocity.x = 0;
+					rock1.velocity.y = 0;*/
+					
+/*					rock1.velocity.x = -200;*/
+					
+/*					FlxG.watch(rock2.maxVelocity, "x", "rock1.maxVelo.x");
+					FlxG.watch(rock2.drag, "x", "rock1.drag.x");
+					FlxG.watch(rock2.velocity, "x", "rock1.velocity.x");
+*/
+//				} else {
+
+					//	Apply half of rock 1's velocity to rock 2
+//					rock1.velocity.x = rock2.velocity.x / 2;
+//					rock1.velocity.y = rock2.velocity.y / 2;
+					//	Stop rock 1
+/*					rock2.velocity.x = 0;
+					rock2.velocity.y = 0;
+*/
+/*					rock2.velocity.x = -200;*/
+					
+/*					FlxG.watch(rock2.maxVelocity, "x", "rock2.maxVelo.x");
+					FlxG.watch(rock2.drag, "x", "rock2.drag.x");
+					FlxG.watch(rock2.velocity, "x", "rock2.velocity.x");
+*/
+//				}
+				
+/*				if (rock1.velocity.y < rock2.velocity.y) {
+					rock1.velocity.y = rock2.velocity.y;
+				} else {
+					rock2.velocity.y = rock1.velocity.y;
+				}
+				
+				if (rock1.velocity.x < rock2.velocity.x) {
+					rock1.velocity.x = rock2.velocity.x;
+				} else {
+					rock2.velocity.x = rock1.velocity.x;
+				}*/
+				
+				//	Sigh. I can't seem to identify which rock is which during a collision.
+				//	There are less than 2 hours left before deadline! O_O
+				//	So I've settled for some very non-realistic physics here...
+				//	When two rocks collide, they are both assigned the highest of the two 
+				//	values (I don't even know why this works)...
+				rock1.velocity.x = rock2.velocity.x;
+				rock1.velocity.y = rock2.velocity.y;
+				
+				//	And then both have their velocity values halved.
+				rock1.velocity.x = rock1.velocity.x / 2;
+				rock1.velocity.y = rock1.velocity.y / 2;
+				rock2.velocity.x = rock2.velocity.x / 2;
+				rock2.velocity.y = rock2.velocity.y / 2;
+				
+				//	This prevents the event from being called a billion times a second
+				collisionEventRegulator = 0;
 			}
+			
 		}
 		
 		public function distanceBetween(point1:FlxPoint, point2:FlxPoint):Number {

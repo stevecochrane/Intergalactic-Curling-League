@@ -1,0 +1,13 @@
+#TITLE Sweep Out
+#COMPOSER Steve Cochrane
+#MAKER 2012 Steve Cochrane
+
+; Volume envelope
+@v0 = { 0 2 4 6 8 10 12 14 10 6 2 0 }
+
+; Tempo set to 120bpm
+D t120
+
+; Set up channel D (noise): length = 8th notes, octave = 3, noise mode = 0 (normal), volume = volume envelope 0
+D l8 o3 @0 @v0
+D c

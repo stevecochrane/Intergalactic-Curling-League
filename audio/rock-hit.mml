@@ -1,0 +1,18 @@
+#TITLE Rock Hit
+#COMPOSER Steve Cochrane
+#MAKER 2012 Steve Cochrane
+
+; Volume envelope
+@v0 = { 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0 }
+
+; Tempo set to 120bpm
+AD t120
+
+; Set up channel A (pulse): length = 8th notes, octave = 5, duty cycle = 2, volume = volume envelope 0
+A l8 o6 @02 @v0
+A a
+
+; Set up channel D (noise): length = 8th notes, octave = 3, noise mode = 0 (normal), volume = volume envelope 0
+D l8 o3 @0 @v0
+D e
+

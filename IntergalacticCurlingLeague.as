@@ -9,6 +9,7 @@ package {
 
 		public function IntergalacticCurlingLeague():void {
 			FlxG.debug = true;
+/*			super(256, 240, PlayState, 2);*/
 			super(256, 240, LogoState, 2);
 		}
 

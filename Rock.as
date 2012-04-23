@@ -32,6 +32,8 @@ package {
 			addAnimation("roll_2", [0, 3, 2, 1], 12);
 			addAnimation("roll_3", [0, 3, 2, 1], 18);
 			addAnimation("roll_4", [0, 3, 2, 1], 24);
+			
+			drag.x = 10;
 
 		}
 		

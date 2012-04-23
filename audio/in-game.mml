@@ -1,0 +1,40 @@
+#TITLE In Game
+#COMPOSER Steve Cochrane
+#PROGRAMER 2012 Steve Cochrane
+
+; Volume envelopes for hi-hat
+@v0 = { 8 6 4 2 0 }
+@v1 = { 4 2 0 }
+
+; Samples (downsampled from some sounds in GarageBand)
+@DPCM0 = { "samples/hip-hop-bass-dirty.dmc", 15 }
+@DPCM2 = { "samples/pop-kit-snare-dirty.dmc", 15 }
+
+; Set tempo for all channels to 120bpm
+ABCDE t120
+
+; Set up channel C (triangle): length = 4th notes, octave = 3, quantize = 6
+C l4 o3 q6
+; First 2 measures
+C r r r r r r r r
+; Second 2 measures
+C r r r r r r r r
+; Third movement
+C [c8 > c8 < c8 > c8 c8 > c8 < c8 c8 < c8 r8 r8 r8]10
+C c8 r8 c8 r8 c8 r8 c8 r8
+
+D l8 o1 @0 @v0
+; First 2 measures
+D r4 r4 r4 r4 r4 r4 r4 r4
+; Second 2 measures
+D [@v0 e @v1 e @v0 e @v1 e @v0 e @v1 e @v0 e @v1 e]18
+
+E l8 o0
+; First 2 measures
+E c r d r c r d r c r d r c r d c
+; Second 2 measures?
+E c r d r c r d r c r d r c r d c c r d r c r d r c r d r c r16 d16 d16 d16 c16 r16
+; Whatever I've lost track, here are some notes
+E c r d r c r d r c r d r c r d c c r d r c r d r c r d r c r16 d16 d16 d16 c16 r16
+E c r d r c r d r c r d r c r d c c r d r c r d r c r d r c r16 d16 d16 d16 c16 r16
+E c r d r c r d r c r d r c r d c c r d r c r d r c r d r c r16 d16 d16 d16 c16 r16
