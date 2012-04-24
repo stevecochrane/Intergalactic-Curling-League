@@ -1,6 +1,7 @@
 My first Ludum Dare entry. It's for two players and it's like curling with a dash of Marble Madness. In space! Be warned: I created all of this in the span of 48 hours, and the resulting code is not pretty.
 
-You can play it here: http://stevecochrane.com/ludum-dare/intergalactic-curling-league/
+Play it here: http://stevecochrane.com/ludum-dare/intergalactic-curling-league/
+Ludum Dare page: http://www.ludumdare.com/compo/ludum-dare-23/?action=preview&uid=12266
 
 INSTRUCTIONS:
 
